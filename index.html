@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Snake Game</title>
+	<style type="text/css">
+		canvas{
+			background-color: lightgrey;
+		}
+	</style>
+</head>
+<body>
+	<h1></h1>
+	<canvas width="500" height="500px"></canvas>
+
+<script>
+	var h1 = document.querySelector('h1');
+	var canvas = document.querySelector('canvas');
+	var ctx = canvas.getContext('2d');
+	var snakeW = 10;
+	var snakeH = 10;
+	var snakeL = 4;
+	var snake = [];
+	var direction = "right";
+	var score = 0;
+
+	//giving snake width, height, x, y and color
+	function drawSnake(x, y){
+		ctx.fillStyle = 'green';
+		ctx.fillRect(x * snakeW, y * snakeH, snakeW, snakeH);
+		ctx.strokeStyle = 'black';
+		ctx.strokeRect(x * snakeW, y * snakeH, snakeW, snakeH);
+	}
+
+	//drawing snake of block 4
+	for(var i = snakeL - 1; i >= 0; i--){
+		snake.push({
+			x: i,
+			y: 0
+		});
+	}
+
+	//analysing the controls
+	window.onkeydown = function(event){
+		if(event.keyCode == 37 && direction != "right"){
+			direction = "left";
+		}
+		if(event.keyCode == 39 && direction != "left"){
+			direction = "right";
+		}
+		if(event.keyCode == 38 && direction != "down"){
+			direction = "up";
+		}
+		if(event.keyCode == 40 && direction != "up"){
+			direction = "down";
+		}
+	}
+
+	//drawing snake
+	function draw(exists){
+		ctx.clearRect(0, 0, canvas.width, canvas.height);
+		for(i = 0; i < snake.length; i++){
+			var  x =  snake[i].x;
+			var y =  snake[i].y;
+			drawSnake(x, y);
+		}
+		//snake head
+		var snakeHeadX = snake[0].x;
+		var snakeHeadY = snake[0].y;
+		//analysing the direction
+		if(direction == "right"){
+			snakeHeadX ++;
+		}
+		if(direction == "left"){
+			snakeHeadX --;
+		}
+		if(direction == "down"){
+			snakeHeadY ++;
+		}
+		if(direction == "up"){
+			snakeHeadY --;
+		}
+		if(snakeHeadX < 0 || snakeHeadY <0 || snakeHeadX >= canvas.width/10 || snakeHeadY >= canvas.height/10){
+			window.clearInterval(set);
+			h1.setAttribute('style','z-index:1;position:absolute;text-align:center;color:yellow;width:500px; height:450px;background-color:rgb(0,0,9,0.6)');
+		 	var p = document.createElement('p');
+		 	p.textContent = "GAME OVER !!! SCORE-"+ score;
+		 	p.setAttribute('style','z-index:3;position:absolute;text-align:center;color:yellow;margin-top:200px;margin-left:50px;');
+		 	h1.appendChild(p);
+		 	button = document.createElement('button');
+		 	button.textContent = "Play Again";
+		 	button.setAttribute('style','z-index:3;text-align:center;background-color:royalblue;color:black;margin-top:250px;margin-left:-70px;width:150px;height:40px;font-size:0.8em;');
+		 	h1.appendChild(button);
+		 	button.onclick = function(){
+		 		window.location.reload();
+		 	}
+		}
+		if(snakeHeadX == food.x && snakeHeadY == food.y){
+			// new snake head
+			var newSnakeHead = {
+				x: snakeHeadX,
+				y: snakeHeadY
+			}
+
+			// generate new food
+			food = {
+				x: Math.round(Math.random() * (canvas.width/snakeW) + 1),
+				y: Math.round(Math.random() * (canvas.height/snakeH) + 1) 
+			}
+			score ++;
+		}
+		else{
+			// new snake head
+			var newSnakeHead = {
+				x: snakeHeadX,
+				y: snakeHeadY
+			}
+			//poping snake head
+		snake.pop();
+		}
+		drawFood(food.x, food.y);
+		snake.unshift(newSnakeHead);
+	}
+
+	//creting food
+	var food = {
+		x: Math.round(Math.random() * (canvas.width/snakeW) + 1),
+		y: Math.round(Math.random() * (canvas.height/snakeH) + 1) 
+	}
+
+	//drawing food
+	function drawFood(x, y){
+		ctx.fillStyle = "red";
+		ctx.fillRect(x * snakeW, y * snakeH, snakeW, snakeH);
+	}
+	var set = window.setInterval(draw, 80);
+</script>
+</body>
+</html>
